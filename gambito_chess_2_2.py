@@ -39,7 +39,7 @@ class Scacchiera(): #scrivo la mia matriciona, i nomi dei pezzi sono i nomi dell
     
 	def muovere(self, mossa): #funzione che modifica la matriciona
 		if self.controlloColoreMossa(mossa) and self.mossaValida(mossa):
-			print(mossa.riga_inizio, mossa.colonna_inizio)
+			#print(mossa.riga_inizio, mossa.colonna_inizio)
 			self.board[mossa.riga_inizio][mossa.colonna_inizio] = '-' #cancello il pezzo ce lascia la casa di partenza
 			self.board[mossa.riga_fine][mossa.colonna_fine] = mossa.pezzo_mosso #metto il pezzo sulla casa di arrivo
 			self.moveLog.append([mossa.NotazioneBella(), mossa.NotazioneBrutta()]) #metto la mossa nello storico
