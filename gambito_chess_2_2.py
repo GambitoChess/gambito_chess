@@ -44,8 +44,8 @@ class Scacchiera(): #scrivo la mia matriciona, i nomi dei pezzi sono i nomi dell
 			self.board[mossa.riga_fine][mossa.colonna_fine] = mossa.pezzo_mosso #metto il pezzo sulla casa di arrivo
 			self.moveLog.append([mossa.NotazioneBella(), mossa.NotazioneBrutta()]) #metto la mossa nello storico
 			self.gestisciMossa(mossa)
-			print("Log: {}".format(self.moveLog))
-			print(self.varco_poss)
+			#print("Log: {}".format(self.moveLog))
+			#print(self.varco_poss)
 			
 
 	def gestisciArrocco(self, mossa):
