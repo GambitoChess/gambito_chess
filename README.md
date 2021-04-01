@@ -1,7 +1,7 @@
 # gambito_chess
 
 ## Descrizione
-Programma per giocare a scacchi.
+Programma per giocare a scacchi. <br>
 Sono implementate le logiche in modo che riconosca le mosse permesse e le mosse non permesse,
 in modo che riconosca scacchi e scacchi matti e che si possa promuovere correttamente.
 
