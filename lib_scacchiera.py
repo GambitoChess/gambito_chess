@@ -59,26 +59,26 @@ class Scacchiera(): #scrivo la mia matriciona, i nomi dei pezzi sono i nomi dell
 		casa_f = [mossa.riga_fine, mossa.colonna_fine]
 
 		#Se ho mosso il re.
-		if casa_i == [7,4]:
+		if mossa.pezzo_mosso[0] == "R":
 			self.arroccoBiancoCorto = False
 			self.arroccoBiancoLungo = False
-		if casa_i == [0,4]:
+			#Se ho mosso il re di due allora sposto la torre come da arrocco.
+			if casa_f == [7,2]:
+				self.board[7][3] = self.board[7][0]
+				self.board[7][0] = "-"
+			if casa_f == [7,6]:
+				self.board[7][5] = self.board[7][7]
+				self.board[7][7] = "-"
+
+		if mossa.pezzo_mosso[0] == "r":
 			self.arroccoNeroCorto = False
 			self.arroccoNeroLungo = False
-
-		#Se ho mosso il re di due allora sposto la torre come da arrocco.
-		if casa_f == [7,2]:
-			self.board[7][3] = self.board[7][0]
-			self.board[7][0] = "-"
-		if casa_f == [7,6]:
-			self.board[7][5] = self.board[7][7]
-			self.board[7][7] = "-"
-		if casa_f == [0,2]:
-			self.board[0][3] = self.board[0][0]
-			self.board[0][0] = "-"
-		if casa_f == [0,6]:
-			self.board[0][5] = self.board[0][7]
-			self.board[0][7] = "-"
+			if casa_f == [0,2]:
+				self.board[0][3] = self.board[0][0]
+				self.board[0][0] = "-"
+			if casa_f == [0,6]:
+				self.board[0][5] = self.board[0][7]
+				self.board[0][7] = "-"
 
 		#Se una torre è stata mossa o catturata dalla/nella casa di partenza
 		if casa_i == [7,0] or casa_f == [7,0]:
@@ -226,7 +226,6 @@ class Scacchiera(): #scrivo la mia matriciona, i nomi dei pezzi sono i nomi dell
 				if (0<=r+d_r<=7 and 0<=c+d_c<=7):
 					controllo_nero += self.board[r+d_r][c+d_c] == "cn"
 
-
 		return (controllo_bianco, controllo_nero)
 
 
@@ -330,20 +329,25 @@ class Scacchiera(): #scrivo la mia matriciona, i nomi dei pezzi sono i nomi dell
 			# Re -----------------------------------
 			# Come torre o alfiere ma di una sola casella
 			if mossa.pezzo_mosso[0].lower() == "r":
+				print("Sto muovendo il re")
 				if (abs(ci-cf) <= 1 and abs(ri-rf) <= 1):
 					risposta = True
 				# Mossa di arrocco
 				# bianco
 				if ri == 7 and rf == 7 and ci == 4:
-					if cf == 6 and self.arroccoBiancoCorto and not (self.calcolaControlloCasa(rf,6)[1] or self.calcolaControlloCasa(rf,5)[1] or self.calcolaControlloCasa(rf,6)[1]):
+					via_libera_lunga = self.board[7][3] == "-" and self.board[7][1] == "-" and not (self.calcolaControlloCasa(rf,6)[1] or self.calcolaControlloCasa(rf,5)[1] or self.calcolaControlloCasa(rf,4)[1])
+					via_libera_corta = not (self.calcolaControlloCasa(rf,2)[1] or self.calcolaControlloCasa(rf,3)[1] or self.calcolaControlloCasa(rf,4)[1])
+					if cf == 6 and self.arroccoBiancoCorto and via_libera_corta:
 						risposta = True
-					if cf == 2 and self.arroccoBiancoLungo and not (self.calcolaControlloCasa(rf,2)[1] or self.calcolaControlloCasa(rf,3)[1] or self.calcolaControlloCasa(rf,6)[1]):
+					if cf == 2 and self.arroccoBiancoLungo and via_libera_lunga:
 						risposta = True
 				# nero
 				if ri == 0 and rf == 0 and ci == 4:
-					if cf == 6 and self.arroccoNeroCorto and not (self.calcolaControlloCasa(rf,6)[0] or self.calcolaControlloCasa(rf,5)[0] or self.calcolaControlloCasa(rf,6)[0]):
+					via_libera_lunga = self.board[rf][3] == "-" and self.board[rf][1] == "-" and not (self.calcolaControlloCasa(rf,6)[0] or self.calcolaControlloCasa(rf,5)[0] or self.calcolaControlloCasa(rf,6)[0]) 
+					via_libera_corta = not (self.calcolaControlloCasa(rf,2)[0] or self.calcolaControlloCasa(rf,3)[0] or self.calcolaControlloCasa(rf,6)[0])
+					if cf == 6 and self.arroccoNeroCorto and via_libera_corta:
 						risposta = True
-					if cf == 2 and self.arroccoNeroLungo and not (self.calcolaControlloCasa(rf,2)[0] or self.calcolaControlloCasa(rf,3)[0] or self.calcolaControlloCasa(rf,6)[0]):
+					if cf == 2 and self.arroccoNeroLungo and via_libera_lunga:
 						risposta = True
 					
 					

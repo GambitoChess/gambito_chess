@@ -82,6 +82,7 @@ def main():
 					gs.stampaControlloCase()
 					print("bss, nss = {}".format(gs.controllaScacchi()))
 					print("\n")
+					print("possibilità arrocchi: bianco l/c, nero l/c: {},{},{},{}".format(gs.arroccoBiancoLungo, gs.arroccoBiancoCorto, gs.arroccoNeroLungo, gs.arroccoNeroCorto))
 
 		#Blocco di stampa dell'immagine
 		stampaPosizione(screen, gs)
