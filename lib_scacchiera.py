@@ -23,7 +23,7 @@ class Scacchiera(): #scrivo la mia matriciona, i nomi dei pezzi sono i nomi dell
 
 	def controlloColoreMossa(self, mossa):
 		#controlla che il pezzo mosso sia del giocatore che ha il tratto
-		risposta = not self.muoveilBianco and mossa.pezzo_mosso[-1] == 'n'
+		risposta = (not self.muoveilBianco) and mossa.pezzo_mosso[-1] == 'n'
 		risposta = risposta or (self.muoveilBianco and mossa.pezzo_mosso[-1] == 'b')
 		return risposta
     
@@ -42,18 +42,43 @@ class Scacchiera(): #scrivo la mia matriciona, i nomi dei pezzi sono i nomi dell
 
 
 
+	def gestisciMossa(self, mossa):
+		#funzione a cui si passa il pezzo mosso e la mossa, dentro a questa funzione 
+		#si possono inserire tutte le logiche complesse di ciascuna mossa.
+        #NOTA: la funzione viene chiamata dopo che la mossa è stata eseguita.
+       
+		self.gestisciArrocco(mossa)
+		#se muove il bianco mo tocca al nero e viceversa
+		self.muoveilBianco = not self.muoveilBianco
+
+
+
 	def gestisciArrocco(self, mossa):
-		#dato il pezzo mosso e la sua casella determina se far perdere un arrocco
+		#dato il pezzo mosso e la sua casella determina se far perdere un arrocco.
 		casa_i = [mossa.riga_inizio, mossa.colonna_inizio]
 		casa_f = [mossa.riga_fine, mossa.colonna_fine]
 
-		#Se ho mosso il re
+		#Se ho mosso il re.
 		if casa_i == [7,4]:
 			self.arroccoBiancoCorto = False
 			self.arroccoBiancoLungo = False
 		if casa_i == [0,4]:
 			self.arroccoNeroCorto = False
 			self.arroccoNeroLungo = False
+			
+		#Se ho mosso il re di due allora sposto la torre come da arrocco.
+		if casa_f == [7,2]:
+			self.board[7][3] = self.board[7][0]
+			self.board[7][0] = "-"
+		if casa_f == [7,6]:
+			self.board[7][5] = self.board[7][7]
+			self.board[7][7] = "-"
+		if casa_f == [0,2]:
+			self.board[0][3] = self.board[0][0]
+			self.board[0][0] = "-"
+		if casa_f == [0,6]:
+			self.board[0][5] = self.board[0][7]
+			self.board[0][7] = "-"
 
 		#Se una torre è stata mossa o catturata dalla/nella casa di partenza
 		if casa_i == [7,0] or casa_f == [7,0]:
@@ -64,17 +89,6 @@ class Scacchiera(): #scrivo la mia matriciona, i nomi dei pezzi sono i nomi dell
 			self.arroccoNeroLungo = False
 		if casa_i == [0,7] or casa_f == [0,7]:
 			self.arroccoNeroCorto = False
-
-
-
-	def gestisciMossa(self, mossa):
-		#funzione a cui si passa il pezzo mosso e la mossa, dentro a questa funzione 
-		#si possono inserire tutte le logiche complesse di ciascuna mossa.
-        #NOTA: la funzione viene chiamata dopo che la mossa è stata eseguita.
-       
-		self.gestisciArrocco(mossa)
-		#se muove il bianco mo tocca al nero e viceversa
-		self.muoveilBianco = not self.muoveilBianco
 
 
 
@@ -216,7 +230,25 @@ class Scacchiera(): #scrivo la mia matriciona, i nomi dei pezzi sono i nomi dell
 		return (controllo_bianco, controllo_nero)
 
 
-				    
+
+	def controllaScacchi(self):
+		#Determina se uno dei due giocatori è sotto scacco, ritorna una tupla (sb, sn)
+		# in cui bss = True se il bianco è sotto scacco, e nss = True se lo il nero, sono ciascuno
+		# a False se invece non c'è lo scacco.
+		# (b/n)ss significa (bianco/nero)SottoScacco.
+		bss = False
+		nss = False
+		for r in range(0,8):
+			for c in range(0,8):
+				if self.board[r][c] == "Rb":
+					#il bianco è sotto scacco se il nero controlla la casa del re
+					bss = bool(self.calcolaControlloCasa(r,c)[1]) 
+				if self.board[r][c] == "rn":
+					nss = bool(self.calcolaControlloCasa(r,c)[0])
+		return (bss,nss)
+
+
+
 	def mossaValida(self, mossa): #controllo che il pezzo selezionato possa muovere come indicato
 		#Scrivo gli "if" uno dentro l'altro per comodità di lettura.
 		#Per tuttu i pezzi: controlla che sulla casa di arrivo indicata non ci sia un pezzo dello stesso colore
@@ -228,7 +260,6 @@ class Scacchiera(): #scrivo la mia matriciona, i nomi dei pezzi sono i nomi dell
 		cf = mossa.colonna_fine
 
 		if not (mossa.pezzo_mosso[-1] == self.board[rf][cf][-1]):
-		
 			#  TORRE ----------------------
 			#- controlla che hai dato o la stessa diagonale o la stessa traversa
 			#- controlla che non ci siano pezzi in mezzo
@@ -298,14 +329,29 @@ class Scacchiera(): #scrivo la mia matriciona, i nomi dei pezzi sono i nomi dell
 						
 			# Re -----------------------------------
 			# Come torre o alfiere ma di una sola casella
-			if mossa.pezzo_mosso[0].lower() == "r" and (abs(ci-cf) == 1 or abs(ri-rf) == 1):
-				risposta = True
-			
+			if mossa.pezzo_mosso[0].lower() == "r":
+				if (abs(ci-cf) <= 1 and abs(ri-rf) <= 1):
+					risposta = True
+				# Mossa di arrocco
+				# bianco
+				if ri == 7 and rf == 7 and ci == 4:
+					if cf == 6 and self.arroccoBiancoCorto and not (self.calcolaControlloCasa(rf,6)[1] or self.calcolaControlloCasa(rf,5)[1] or self.calcolaControlloCasa(rf,6)[1]):
+						risposta = True
+					if cf == 2 and self.arroccoBiancoLungo and not (self.calcolaControlloCasa(rf,2)[1] or self.calcolaControlloCasa(rf,3)[1] or self.calcolaControlloCasa(rf,6)[1]):
+						risposta = True
+				# nero
+				if ri == 0 and rf == 0 and ci == 4:
+					if cf == 6 and self.arroccoNeroCorto and not (self.calcolaControlloCasa(rf,6)[0] or self.calcolaControlloCasa(rf,5)[0] or self.calcolaControlloCasa(rf,6)[0]):
+						risposta = True
+					if cf == 2 and self.arroccoNeroLungo and not (self.calcolaControlloCasa(rf,2)[0] or self.calcolaControlloCasa(rf,3)[0] or self.calcolaControlloCasa(rf,6)[0]):
+						risposta = True
+					
+					
+
 			# PEDONE -------------------------
 			# se muovi sulla riga successiva controlla che sia vuota (riga precedente per nero)
 			# se muovi di uno in diagonale controlla che ci sia un pezzo avversario oppure che 
 			# puoi effettuare la presa al varco.
-			
 			if mossa.pezzo_mosso[0] == "p" or mossa.pezzo_mosso[0] == "P":
 				#spinta di uno
 				if ci-cf == 0 and (rf-ri) == 1 and self.board[rf][cf] == '-' and not self.muoveilBianco:
@@ -324,8 +370,8 @@ class Scacchiera(): #scrivo la mia matriciona, i nomi dei pezzi sono i nomi dell
 				if (ci-cf)**2 == 1 and (rf-ri) == -1 and self.muoveilBianco and ri == 3 and cf == self.varco_poss:
 					self.board[ri][cf] = "-"
 					risposta = True
-					
-			# Spegni la presa al varco
+
+			# Spegni la presa al varco, metto qui tale riga perché è immediatamente dopo le mosse di uno pedone.
 			self. varco_poss = 8 # 8: non permessa
 					
 			# Pedone, spinta di due, è importante che sia alla fine così da segnare la possibilità di
@@ -355,6 +401,7 @@ class Scacchiera(): #scrivo la mia matriciona, i nomi dei pezzi sono i nomi dell
 			for c in range(0,8):
 				print("{} ".format(self.calcolaControlloCasa(r,c)[1]), end= "")
 			print("\n",end="")
+		print("\n", end="")
 
 
 
