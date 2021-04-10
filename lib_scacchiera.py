@@ -65,7 +65,7 @@ class Scacchiera(): #scrivo la mia matriciona, i nomi dei pezzi sono i nomi dell
 		if casa_i == [0,4]:
 			self.arroccoNeroCorto = False
 			self.arroccoNeroLungo = False
-			
+
 		#Se ho mosso il re di due allora sposto la torre come da arrocco.
 		if casa_f == [7,2]:
 			self.board[7][3] = self.board[7][0]
@@ -407,8 +407,8 @@ class Scacchiera(): #scrivo la mia matriciona, i nomi dei pezzi sono i nomi dell
 
 
 
+
 class Mossa():
-    #dizionari
     numeri = {'1': 7, '2': 6, '3': 5, '4': 4, '5': 3, '6': 2, '7': 1, '8': 0}
     numeriback = {v: k for k, v in numeri.items()}
     lettere = {'a': 0, 'b': 1, 'c': 2, 'd': 3, 'e': 4, 'f': 5, 'g': 6, 'h': 7}
