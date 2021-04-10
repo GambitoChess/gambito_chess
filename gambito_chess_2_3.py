@@ -15,7 +15,6 @@ def caricalo(): #per ogni pezzo nella matrice associo un'immagine da caricare
     pezzi = ['Tb', 'Cb', 'Ab', 'Db', 'Rb', 'Pb', 'tn', 'cn', 'an', 'dn', 'rn', 'pn']
     for pezzo in pezzi:
         immagine[pezzo] = py.transform.scale(py.image.load('./immagini/' + pezzo + '.png'), (lato_casa, lato_casa))
-# il path delle immagini mi ha fatto dannare, se serve cambialo
 
 def stampaPosizione(screen, gs):
 	stampaScacchiera(screen)
@@ -81,9 +80,10 @@ def main():
 					#Blocco per il debug o stampe di test:
 					print("Mossa immessa: " +move.NotazioneBella())
 					gs.stampaControlloCase()
+					print("bss, nss = {}".format(gs.controllaScacchi()))
 					print("\n")
 
-		#Blocco stampa dell'immagine
+		#Blocco di stampa dell'immagine
 		stampaPosizione(screen, gs)
 		stampaTurno(screen, gs.muoveilBianco)
 		clock.tick(10) #dico quante volte aggiorno lo schermo al secondo (ho messo un numero a caso)
